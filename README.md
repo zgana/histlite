@@ -1,5 +1,7 @@
 # histlite
 
+See documentation on [ReadTheDocs](https://histlite.readthedocs.io/en/latest/index.html).
+
 **histlite** is a histogram calculation and plotting library that tries to be
 "lite" on data structures but rich in statistics and visualization features.
 So far, development has taken place during my (Mike Richman) time as a graduate
