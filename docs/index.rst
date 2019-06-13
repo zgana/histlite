@@ -14,6 +14,7 @@ on data structures but rich in statistics and visualization features.
    :caption: Contents:
 
    about
+   install
    tutorials
    reference
 
