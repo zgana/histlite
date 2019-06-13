@@ -1291,7 +1291,7 @@ def hist_like_indices (other, ravel_indices, weights=None):
     :param  other: the pre-existing histogram which defines the binning
 
     :type   ravel_indices: array-like
-    :param  ravel_indices: result of a :ref:`Hist.ravel_indices` call for the
+    :param  ravel_indices: result of a :meth:`Hist.ravel_indices` call for the
         samples.
 
     :type   weights: array-like
@@ -1333,7 +1333,7 @@ def hist_direct (data, weights=None, bins=None, range=None, keep_data=False):
 
     This method creates a :class:`Hist` by calling ``np.histogramdd()`` as
     directly as possible.  Note that this requires a slightly more constrained
-    format for ``data`` compared with :function:`hist`.
+    format for ``data`` compared with :meth:`hist`.
     """
     if len (np.shape (data)) > 1:
         data = np.transpose (data)
@@ -1374,7 +1374,7 @@ def hist_from_function (bins, func, *args, **kwargs):
 
     Any additional positional or keyword arguments are passed to ``func``.
 
-    Note: This function is now deprecated; use :ref:`hist_from_eval` instead.
+    Note: This function is now deprecated; use :meth:`hist_from_eval` instead.
     """
     warnings.warn (
         'this function is deprecated; use hist_from_eval() instead',
@@ -1601,9 +1601,9 @@ def hist_from_eval (f, vectorize=True, err_f=None, ndim=None, **kwargs):
     :param  err_f: if given, function to evaluate to obtain "errors"
 
     All other keyword arguments define the binning the same as for
-    :ref:`hist`.
+    :meth:`hist`.
 
-    This function supersedes :ref:`hist_from_function`.
+    This function supersedes :meth:`hist_from_function`.
     """
     # infer number of arguments
     try:

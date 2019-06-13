@@ -4,14 +4,14 @@ About this project
 Introduction
 ------------
 
-**histlite** is a histogram calculation and plotting library that tries to
-be "lite" on data structures but rich in statistics and visualization
-features.  So far, development has taken place during the my (Mike Richman)
-time as a graduate student and post-doctoral researcher in the field of
-particle astrophysics --- specifically, working with the IceCube Neutrino
-Observatory.  Histlite is intended both to facilitate high-paced exploratory
-data analysis as well as to serve as a building block for potentially very
-complex maximum likelihood data analysis implementations.
+**histlite** is a histogram calculation and plotting library that tries to be
+"lite" on data structures but rich in statistics and visualization features.
+So far, development has taken place during my (Mike Richman) time as a graduate
+student and post-doctoral researcher in the field of particle astrophysics ---
+specifically, working with the IceCube Neutrino Observatory.  Histlite is
+intended both to facilitate high-paced exploratory data analysis as well as to
+serve as a building block for potentially very complex maximum likelihood data
+analysis implementations.
 
 The core design considerations are:
 
