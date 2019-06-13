@@ -17,6 +17,3 @@ on data structures but rich in statistics and visualization features.
    tutorials
    reference
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
