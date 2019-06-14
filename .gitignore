@@ -1,2 +1,5 @@
+build
+dist
+*egg*
 _build
 __pycache__
