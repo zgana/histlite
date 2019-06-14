@@ -758,7 +758,24 @@ class Hist (object):
             xdata = np.array ([xd[mask] for xd in xdata])
         else:
             xdata = self.centers[0][mask]
-        return optimize.curve_fit (func, xdata, ydata, sigma=sigma, **kw)
+        # special case for scipy rvs functions
+        if hasattr(func, '__self__'):
+            shapes = func.__self__.shapes
+            if shapes:
+                n_args = 2 + len(shapes.split(','))
+            else:
+                n_args = 2
+            funcs = {
+                1: (lambda x, a: func(x, a)),
+                2: (lambda x, a,b: func(x, a,b)),
+                3: (lambda x, a,b,c: func(x, a,b,c)),
+                4: (lambda x, a,b,c,d: func(x, a,b,c,d)),
+                5: (lambda x, a,b,c,d,e: func(x, a,b,c,d,e)),
+            }
+            f = funcs[n_args]
+        else:
+            f = func
+        return optimize.curve_fit (f, xdata, ydata, sigma=sigma, **kw)
 
     def spline_fit (self, log=False, floor=None, *a, **kw):
         """
