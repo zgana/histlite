@@ -4,7 +4,7 @@ Installing histlite
 As of June, 2019, histlite is hosted on github, with releases accessible via
 PyPI.  For a basic user installation, simply use:
 
-.. code::
+.. code-block:: bash
 
     # install from PyPI
     pip install --user histlite
@@ -12,7 +12,7 @@ PyPI.  For a basic user installation, simply use:
 For a development install (i.e. you want to modify histlite yourself), navigate
 to an appropriate development directory (e.g. ``$HOME/src``), and then:
 
-.. code::
+.. code-block:: bash
 
     # using SSH
     git clone git@github.com:zgana/histlite.git
