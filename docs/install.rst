@@ -6,17 +6,17 @@ PyPI.  For a basic user installation, simply use:
 
 .. code::
 
-   # install from PyPI
-   pip install --user histlite
+    # install from PyPI
+    pip install --user histlite
 
 For a development install (i.e. you want to modify histlite yourself), navigate
 to an appropriate development directory (e.g. ``$HOME/src``), and then:
 
 .. code::
 
-   # using SSH
-   git clone git@github.com:zgana/histlite.git
-   # using HTTPS
-   git clone https://github.com/zgana/histlite.git
-   # finally, install
-   pip install --user --editable ./histlite
+    # using SSH
+    git clone git@github.com:zgana/histlite.git
+    # using HTTPS
+    git clone https://github.com/zgana/histlite.git
+    # finally, install
+    pip install --user --editable ./histlite
