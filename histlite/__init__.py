@@ -323,7 +323,7 @@ class Hist (object):
 
     # sampling
 
-    def sample (self, n_samples=1, *values):
+    def sample (self, n_samples=1, *values, **kw):
         """Draw n samples from the data.
 
         :type   n_samples: int
@@ -334,17 +334,18 @@ class Hist (object):
 
         :return: tuple of arrays of length n_dim
         """
+        random = kw.get('random', np.random)
         if values:
             return self[values].sample (n_samples)
         cdf = np.cumsum (self.values.ravel ()) / self.values.sum ()
-        dice = np.random.random (n_samples)
+        dice = random.uniform (0, 1, n_samples)
         dice_bins = np.searchsorted (cdf, dice)
         indices = np.unravel_index (dice_bins, self.values.shape)
         lefts = [self.bins[i][indices[i]] for i in xrange (self.n_dim)]
         rights = [self.bins[i][indices[i] + 1] for i in xrange (self.n_dim)]
-        outs = [left * ((right / left) ** np.random.random (n_samples))
+        outs = [left * ((right / left) ** random.uniform (0, 1, n_samples))
                 if self.log[i] else
-                left + (right - left) * np.random.random (n_samples)
+                left + (right - left) * random.uniform (0, 1, n_samples)
                 for (i, left,right)
                 in izip (xrange (self.n_dim), lefts, rights)]
         return outs
