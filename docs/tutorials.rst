@@ -6,3 +6,4 @@ Tutorials
    :caption: Contents:
 
    getting_started
+   pdfs_and_normalization
