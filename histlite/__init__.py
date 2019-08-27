@@ -33,6 +33,19 @@ except:
     pass
 
 def reindex (a, order):
+    """Rearrange the axes of a multidimensional array.
+
+    :type   a: ndarray
+    :param  a: the input array
+
+    :type   order: sequence of int
+    :param  order: the axis that should wind up in each ordinal position
+
+    :return: reindexed array
+
+    Note: this is useful for implementing :meth:`Hist.sum`, etc., but you probably should
+    prefer ``np.swapaxes``, possibly using multiple applications, instead.
+    """
     cur = list(range (len (a.shape)))
     assert (sorted (order) == cur)
     for i_dest, i_source in enumerate (order):
@@ -42,6 +55,19 @@ def reindex (a, order):
     return a
 
 def unreindex (a, order):
+    """Reverse the effects of :meth:`reindex`.
+
+    :type   a: ndarray
+    :param  a: the already reindexed array
+
+    :type   order: sequence of int
+    :param  order: order previously applied to :meth:`reindex`
+
+    :return: unreindexed array
+
+    Note: this is useful for implementing :meth:`Hist.sum`, etc., but you probably should
+    prefer ``np.swapaxes``, possibly using multiple applications, instead.
+    """
     cur = list(range (len (a.shape)))
     assert (sorted (order) == cur), '{} vs {}'.format (sorted (order), cur)
     for i_source, i_dest in enumerate (order):
@@ -134,7 +160,7 @@ class Hist (object):
         values = self.values
         for (mask, k) in izip (masks, (nan, inf, minf)):
             if callable (k):
-                v = k (values)
+                v = k (values[~mask])
             else:
                 v = k
             values[mask] = v
@@ -334,7 +360,8 @@ class Hist (object):
 
         :return: tuple of arrays of length n_dim
         """
-        random = kw.get('random', np.random)
+        seed = kw.get('seed', np.random.seed())
+        random = kw.get('random', np.random.RandomState(seed))
         if values:
             return self[values].sample (n_samples)
         cdf = np.cumsum (self.values.ravel ()) / self.values.sum ()
@@ -353,15 +380,18 @@ class Hist (object):
 
     # axis-wise operations
 
-    def cumsum (self, axes=[-1]):
+    def cumsum (self, axes=[-1], normalize=False):
         """
-        Calculate the cumulative sum along specified axes.
+        Calculate the cumulative sum along specified axes (in order).
 
         """
         values = self.values.copy ()
+        axes = np.atleast_1d(axes)
         sum_axes = [self.n_dim + i if i < 0 else i for i in axes]
         for axis in sum_axes:
             values = values.cumsum (axis=axis)
+        if normalize:
+            values = values / self.sum(axes).values
         return Hist (self.bins, values)
 
     def sum (self, axes=None, integrate=False):
@@ -380,6 +410,7 @@ class Hist (object):
         """
         if axes is None:
             axes = list(range (self.n_dim))
+        axes = np.atleast_1d(axes)
 
         # get sum and keep axes
         sum_axes = sorted ([self.n_dim + i if i < 0 else i for i in axes])
@@ -755,7 +786,7 @@ class Hist (object):
         ydata = ydata[mask]
         sigma = sigma[mask]
         if self.n_dim >= 2:
-            xdata = np.array (list(map (np.ravel, np.meshgrid (*self.centers))))
+            xdata = np.array (list(map (np.ravel, np.meshgrid (*self.centers, indexing='ij'))))
             xdata = np.array ([xd[mask] for xd in xdata])
         else:
             xdata = self.centers[0][mask]
@@ -814,9 +845,12 @@ class Hist (object):
                 with warnings.catch_warnings ():
                     warnings.filterwarnings ('ignore')
                     logy = np.log (y)
+                    err /= y
                 logy[y == 0] = floor
                 y = logy
-            mask = err > 0
+            with warnings.catch_warnings ():
+                warnings.filterwarnings ('ignore')
+                mask = err > 0
             spl = interpolate.UnivariateSpline (
                 x[mask], y[mask], 1 / err[mask], *a, **kw
             )
@@ -884,6 +918,7 @@ class Hist (object):
 
     def matches (self, other):
         """True if self and other have the same binning."""
+        #return True
         for (sbins, obins) in izip (self.bins, other.bins):
             n = len (sbins)
             if len (obins) != n:
@@ -1098,14 +1133,14 @@ class Hist (object):
             out.append ('{} bins in [{},{}], '.format (
                 self.n_bins[dim], self.range[dim][0], self.range[dim][1]
             ))
-        # turn trailing comma into paren
+        out.append ('with {} {}'.format (
+            'sum' if self.n_dim else 'value',
+            self.values.sum()))
         if self.n_dim:
-            out[-1] = out[-1][:-2] + ')'
-        out.append (' with sum {},'.format (self.values.sum()))
-        out.append (' {} empty bins,'.format (np.sum (self.values == 0)))
-        out.append (' and {} non-finite values'.format (
-            np.sum (~np.isfinite (self.values)))
-        )
+            out.append (', {} empty bins,'.format (np.sum (self.values == 0)))
+            out.append (' and {} non-finite values'.format (
+                np.sum (~np.isfinite (self.values))))
+        out.append(')')
         return ''.join (out)
 
 
@@ -2273,7 +2308,7 @@ def stack1d (ax, hs,
     return outs
 
 
-def plot2d (ax, h,
+def plot2d (ax, h=None,
             log=False,
             cbar=False,
             levels=None,
@@ -2306,8 +2341,9 @@ def plot2d (ax, h,
 
     Other keyword arguments are passed to ax.pcolormesh().
     """
-    if ax is None:
-        fig, ax = plt.subplots ()
+    if h is None:
+        h = ax
+        ax = plt.gca ()
     if h.n_dim != 2:
         raise TypeError ('`h` must be a 2D Hist')
     plotvalues = h.values.T
@@ -2326,6 +2362,7 @@ def plot2d (ax, h,
     Bx, By = np.meshgrid (xbins, ybins)
     vmin = kwargs.pop ('vmin', H.min ())
     vmax = kwargs.pop ('vmax', H.max ())
+    clabel = kwargs.pop ('clabel', None)
     cticks = None
     if log:
         kwargs['norm'] = mpl.colors.LogNorm (vmin, vmax)
@@ -2361,6 +2398,8 @@ def plot2d (ax, h,
             cb = ax.figure.colorbar (pc, ax=ax, **cb_kw)
         if cticks is not None:
             cb.set_ticks (cticks)
+        if clabel:
+            cb.set_label (clabel)
         return dict (colormesh=pc, colorbar=cb)
     else:
         return pc
