@@ -28,7 +28,7 @@ import warnings
 eps = np.finfo(float).eps
 
 try:
-    import heal
+    from . import heal
 except:
     pass
 
@@ -1704,7 +1704,7 @@ def kde (data, weights=None, kernel=.01, normalize=True,
          indices=None, get_indices=False, **kw):
     data, n_dim, n_samples = _regularize_data (data)
     if indices is None:
-        kw.setdefault ('bins', int (np.ceil (1000 / n_dim)))
+        kw['bins'] = kw.pop('kde_bins', int (np.ceil (1000 / n_dim)))
         h = hist (data, weights=weights, **kw)
     else:
         empty = [[1] for i in xrange (n_dim)]
@@ -1716,10 +1716,8 @@ def kde (data, weights=None, kernel=.01, normalize=True,
 
     kernel_bins = [
         kernel[axis] * h.n_bins[axis]
-        #kernel[axis] / np.mean (np.diff (
-        #    np.log10 (h.bins[axis]) if h.log[axis] else h.bins[axis]))
         for axis in xrange (h.n_dim) ]
-    h = h.gaussian_filter (kernel_bins)
+    h = h.gaussian_filter (kernel_bins, truncate=20)
     if normalize:
         h = h.normalize (axes=None if normalize is True else normalize)
     h.kernel, h.kernel_bins = orig_kernel, kernel_bins
@@ -1728,7 +1726,7 @@ def kde (data, weights=None, kernel=.01, normalize=True,
     else:
         return h
 
-def profile (f, data, weights, **kw):
+def profile (data, weights, f=hist, **kw):
     # mean: weighted by value, divided by pure counting
     if f is kde:
         kw.setdefault ('normalize', False)
@@ -1740,8 +1738,8 @@ def profile (f, data, weights, **kw):
     h_dev2 = f (data, dev**2, **kw)
     h_stddev = (h_dev2 / h_count**2).sqrt()
     h_mean._errors = h_stddev.values
-    if f is kde:
-        h_mean._errors /= np.asarray (h_count.kernel_bins)
+    #if f is kde:
+    #    h_mean._errors /= np.asarray (h_count.kernel_bins)
     return h_mean
 
 
