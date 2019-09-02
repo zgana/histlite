@@ -4,7 +4,7 @@ from setuptools import setup
 import sys
 import setuptools
 
-__version__ = '0.9.4'
+__version__ = '0.9.5'
 
 
 with open("README.md", "r") as fh:
