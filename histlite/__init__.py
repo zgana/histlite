@@ -889,12 +889,6 @@ class Hist (object):
             args += a
             s = interpolate.Rbf (*args, **kw)
             return SplineFit (self, s, self.log, log, floor)
-        #else:
-        #    raise TypeError (
-        #        'cannot fit spline to {0} dimensional Hist'.format (
-        #            self.n_dim
-        #        )
-        #    )
 
     # smoothing
     def gaussian_filter (self, *a, **kw):
