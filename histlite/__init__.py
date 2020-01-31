@@ -32,6 +32,11 @@ try:
 except:
     pass
 
+try:
+    from . import bear
+except:
+    pass
+
 def reindex(a, order):
     """Rearrange the axes of a multidimensional array.
 
@@ -272,8 +277,11 @@ class Hist(object):
         else:
             return np.prod(np.meshgrid(*map(np.diff, self.bins)), axis=0).T
 
-    def linspace(self):
-
+    def plotrange(self, N=100):
+        """Get linspace or logspace along each binning axis."""
+        return tuple(
+            np.logspace(np.log10(mi), np.log10(ma), N) if log else np.linspace(mi, ma, N)
+            for ((mi, ma),log) in zip(self.range, self.log))
 
     # bin-data access
 
