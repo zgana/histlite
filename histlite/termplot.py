@@ -6,7 +6,6 @@ from __future__ import print_function
 
 from copy import deepcopy
 from collections import defaultdict
-from itertools import izip
 import numpy as np
 try:
     import termcolor
@@ -147,7 +146,7 @@ class Hist1D (object):
     def raster (self, fig):
         raster = fig.blank
         i, j = [], []
-        for (ix, x) in izip (fig._I, fig._X):
+        for (ix, x) in zip (fig._I, fig._X):
             if not self.h.range[0][0] <= x < self.h.range[0][-1]:
                 continue
             v = self.h.get_value (x)
@@ -341,8 +340,8 @@ class Figure (object):
         else:
             return (j - self.ypad - .5) / self.dy + self.ylim[0]
     def _set (self, raster, value, i, j, color=None, clip=True):
-        i = np.atleast_1d (i)
-        j = np.atleast_1d (j)
+        i = np.atleast_1d (i).astype(int)
+        j = np.atleast_1d (j).astype(int)
         if color and termcolor:
             value = np.atleast_1d (value)
             color = self.colors.get (color, color)
@@ -412,6 +411,25 @@ class Figure (object):
     # Display
 
     def __unicode__ (self):
+        raster = self.blank
+        Xs = deepcopy (self.Xs)
+        for z in sorted (self.Xs):
+            if self.axes.visible and self.axes.zorder == z:
+                Xs[z].insert (0, self.axes)
+            if self.xticks.visible and self.xticks.zorder == z:
+                Xs[z].insert (0, self.xticks)
+            if self.yticks.visible and self.yticks.zorder == z:
+                Xs[z].insert (0, self.yticks)
+            for X in Xs[z]:
+                if not X.visible:
+                    continue
+                r = X.raster (self)
+                i, j = np.where (r)
+                raster[i,j] = r[i,j]
+        out = u'\n'.join (map (u''.join, raster.T[::-1]))
+        return out
+
+    def __str__ (self):
         raster = self.blank
         Xs = deepcopy (self.Xs)
         for z in sorted (self.Xs):
