@@ -121,8 +121,8 @@ class Scatter (object):
         """
         Draw a scatter plot.
         """
-        self.x = x
-        self.y = y
+        self.x = np.array(x)
+        self.y = np.array(y)
         self.marker = marker
         self.color = color
         self.zorder = zorder
@@ -130,7 +130,12 @@ class Scatter (object):
 
     def raster (self, fig):
         raster = fig.blank
-        i, j = fig._i (self.x), fig._j (self.y)
+        mask = np.ones_like(self.x, dtype=bool)
+        if fig.xlog:
+            mask &= self.x > 0
+        if fig.ylog:
+            mask &= self.y > 0
+        i, j = fig._i (self.x[mask]), fig._j (self.y[mask])
         fig._set (raster, self.marker, i, j, color=self.color)
         return raster
 
@@ -218,7 +223,9 @@ class Figure (object):
         x = [np.ravel (value) for value in a if value is not None]
         if x:
             x = np.concatenate (x)
-            i = np.isfinite (np.log10 (x)) if log else np.isfinite (x)
+            i = np.isfinite(x)
+            if log:
+                i &= (x > 0)
             xmin = np.min (x[i])
             xmax = np.max (x[i])
             if lim[0] is not None:
@@ -229,10 +236,10 @@ class Figure (object):
         else:
             return lim
 
-    def _update_xlim (self, *a):
-        self.set_xlim (*self._get_lim (self.xlim, self.xlog, *a))
-    def _update_ylim (self, *a):
-        self.set_ylim (*self._get_lim (self.ylim, self.ylog, *a))
+    def _update_xlim (self, *a, **kw):
+        self.set_xlim (*self._get_lim (self.xlim, self.xlog, *a), **kw)
+    def _update_ylim (self, *a, **kw):
+        self.set_ylim (*self._get_lim (self.ylim, self.ylog, *a), **kw)
 
 
     # Properties reference
@@ -298,16 +305,18 @@ class Figure (object):
     def YY (self):
         return self._YY
 
-    def set_xlim (self, xmin=None, xmax=None):
+    def set_xlim (self, xmin=None, xmax=None, set_scale=True):
         xmin = self.xlim[0] if xmin is None else xmin
         xmax = self.xlim[1] if xmax is None else xmax
         self._xlim = (xmin, xmax)
-        self._set_scale ()
-    def set_ylim (self, ymin=None, ymax=None):
+        if set_scale:
+            self._set_scale ()
+    def set_ylim (self, ymin=None, ymax=None, set_scale=True):
         ymin = self.ylim[0] if ymin is None else ymin
         ymax = self.ylim[1] if ymax is None else ymax
         self._ylim = (ymin, ymax)
-        self._set_scale ()
+        if set_scale:
+            self._set_scale ()
 
 
     # Drawing building blocks
@@ -378,7 +387,7 @@ class Figure (object):
             x, y, marker=marker, color=color, zorder=zorder
         )
         self.Xs[zorder].append (s)
-        self._update_xlim (x)
+        self._update_xlim (x, set_scale=False)
         self._update_ylim (y)
 
     def plot (self, *a, **kw):
