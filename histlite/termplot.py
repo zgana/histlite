@@ -80,12 +80,12 @@ class Ticks (object):
                 j = axes.j (fig) - 1
                 label = format (xtick if delta < 1 else np.round (xtick), 'g')
                 L = len (label)
-                i1 = fig._i (xtick) - L / 2
+                i1 = fig._i (xtick) - L // 2
                 i2 = i1 + L
                 I = np.r_[i1:i2]
                 J = np.repeat (j, L)
                 fig._set (raster, list (label), I, J,
-                          color=color, clip=False)
+                          color=color, clip=False, squeeze=True)
         elif axis == 'y':
             ymin, ymax = fig.ylim
             delta = ymax - ymin
@@ -339,9 +339,9 @@ class Figure (object):
             return 10**((j - self.ypad - .5) / self.dy + np.log10 (self.ylim[0]))
         else:
             return (j - self.ypad - .5) / self.dy + self.ylim[0]
-    def _set (self, raster, value, i, j, color=None, clip=True):
-        i = np.atleast_1d (i).astype(int)
-        j = np.atleast_1d (j).astype(int)
+    def _set (self, raster, value, i, j, color=None, clip=True, squeeze=False):
+        i = np.atleast_1d (i)
+        j = np.atleast_1d (j)
         if color and termcolor:
             value = np.atleast_1d (value)
             color = self.colors.get (color, color)
@@ -351,6 +351,9 @@ class Figure (object):
         else:
             i0 = j0 = 0
         mask = (i0 <= i) & (i < self.Xsize) & (j0 <= j) & (j < self.Ysize)
+        if squeeze:
+            i = i - (len(value) - mask.sum())
+            mask = (i0 <= i) & (i < self.Xsize) & (j0 <= j) & (j < self.Ysize)
         if mask.sum ():
             raster[i[mask], j[mask]] = value
 
