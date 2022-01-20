@@ -18,12 +18,17 @@ try:
 except ImportError:
     izip = zip
 import itertools
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import numpy as np
 import os
 from scipy import interpolate, ndimage, optimize, stats
 import warnings
+
+try:
+    import matplotlib as mpl
+    import matplotlib.pyplot as plt
+except:
+    mpl = plt = None
+
 
 eps = np.finfo(float).eps
 
@@ -2289,9 +2294,7 @@ def stack1d(ax, hs,
     if ax is None:
         fig, ax = plt.subplots()
     if colors is None:
-        default_cycle = 'bgrcmyk'
-        colors = ''.join(default_cycle[i % len(default_cycle)]
-                          for i in range(len(hs)))
+        colors = ['C{}'.format(i % 10) for (i,_) in enumerate(hs)]
     if labels is None:
         labels = ['' for h in hs]
     if kws is None:

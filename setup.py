@@ -20,5 +20,5 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/zgana/histlite',
-    install_requires=['numpy', 'scipy', 'matplotlib'],
+    install_requires=['numpy', 'scipy'],
 )
