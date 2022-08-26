@@ -1437,7 +1437,7 @@ def hist_from_function(bins, func, *args, **kwargs):
     :type   func: function
     :param  func: the function to evaluate. it should return floats and respect
         numpy broadcasting rules.  if ``splat`` is true, it should take
-        ``len(bins)``(that is, n_dim) arguments; otherwise, it should accept
+        ``len(bins)`` (that is, n_dim) arguments; otherwise, it should accept
         a single argument containing all values of all independent variables
 
     :type   err_func: function

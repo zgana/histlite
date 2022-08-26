@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 import sys
 import setuptools
 
-__version__ = '0.9.5'
+__version__ = '2022.8.26'
 
 
 with open("README.md", "r") as fh:
