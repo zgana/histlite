@@ -1,5 +1,8 @@
+.ipynb_checkpoints
 build
 dist
 *egg*
 _build
 __pycache__
+
+scratch
