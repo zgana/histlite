@@ -1,27 +1,16 @@
 # histlite.py
 
-from __future__ import print_function, division
-
-__doc__  = """Calculate and plot histograms, easily."""
-
-# Lame python 3 compat
-try:
-    xrange
-except NameError:
-    xrange = range
+"""Calculate and plot histograms, easily."""
 
 import copy
 import datetime
 import inspect
-try:
-    from itertools import izip
-except ImportError:
-    izip = zip
 import itertools
-import numpy as np
 import os
-from scipy import interpolate, ndimage, optimize, stats
 import warnings
+
+import numpy as np
+from scipy import interpolate, ndimage, optimize, stats
 
 try:
     import matplotlib as mpl
@@ -41,6 +30,10 @@ try:
     from . import bear
 except:
     pass
+
+
+xrange = range
+
 
 def reindex(a, order):
     """Rearrange the axes of a multidimensional array.
@@ -168,7 +161,7 @@ class Hist(object):
         self = self.copy()
         masks = np.isnan(self.values), self.values == np.inf, self.values == -np.inf
         values = self.values
-        for (mask, k) in izip(masks, (nan, inf, minf)):
+        for (mask, k) in zip(masks, (nan, inf, minf)):
             if callable(k):
                 v = k(values[~mask])
             else:
@@ -293,7 +286,7 @@ class Hist(object):
     def index(self, x, axis=0):
         """The bin index for value ``x`` in dimension ``axis``."""
         def digitize(b, a):
-            return np.searchsorted(a, b, side='r')
+            return np.searchsorted(a, b, side='right')
         shape = np.shape(x)
         last_mask = x == self.range[axis][1]
         last_i = self.n_bins[axis] - 1
@@ -336,7 +329,7 @@ class Hist(object):
 
     def get_values(self, *xs):
         """Get the counts values at the specified lists of coordinates."""
-        indices = tuple([self.index(x,i) for (i,x) in enumerate(xs)])
+        indices = tuple([self.index(np.asarray(x),i) for (i,x) in enumerate(xs)])
         return self.values[indices]
 
     def __call__(self, *xs):
@@ -390,7 +383,7 @@ class Hist(object):
                 if self.log[i] else
                 left + (right - left) * random.uniform(0, 1, n_samples)
                 for (i, left,right)
-                in izip(xrange(self.n_dim), lefts, rights)]
+                in zip(xrange(self.n_dim), lefts, rights)]
         return outs
 
 
@@ -552,7 +545,7 @@ class Hist(object):
         out._errors = np.vstack(((out - h_low).values, (h_high - out).values))
         return out
 
-    def median(self, axis):
+    def median(self, axis=-1):
         """Project the histogram onto a subset of its dimensions by taking the
         median along ``axis``.
 
@@ -563,6 +556,28 @@ class Hist(object):
         :return: :class:`Hist`
         """
         return self.contain(axis, .5)
+
+    def mean(self, axis=-1):
+        """Project the histogram onto a subset of its dimensions by taking the mean along
+        ``axis``.
+
+        :type   axis: int
+        :param  axis: the axis along which to find the median and thus the
+            dimensions no longer present in the resulting Hist.
+
+        :return: :class:`Hist`
+        """
+        if axis < 0:
+            axis = len(self.bins) + axis
+
+        keep_axes = [i for i in xrange(self.n_dim) if i != axis]
+        reorder = keep_axes + [axis]
+
+        values = reindex(self.values, reorder)
+        values = (self.centers[axis] * values).sum(axis=-1) / values.sum(axis=-1)
+        bins = [self.bins[i] for i in keep_axes]
+        # TODO: can we calculate an error/interval as well?
+        return Hist(bins, values)
 
     def normalize(self, axes=None, integrate=True, density=False):
         """Return a histogram normalized so the sums(or integrals) over the
@@ -929,7 +944,7 @@ class Hist(object):
     def matches(self, other):
         """True if self and other have the same binning."""
         #return True
-        for (sbins, obins) in izip(self.bins, other.bins):
+        for (sbins, obins) in zip(self.bins, other.bins):
             n = len(sbins)
             if len(obins) != n:
                 return False
@@ -2301,7 +2316,7 @@ def stack1d(ax, hs,
         kws = [{} for h in hs]
     total = ymin
     outs = []
-    for (h, kw, color, label) in izip(hs, kws, colors, labels):
+    for (h, kw, color, label) in zip(hs, kws, colors, labels):
         new_total = total + h
         kw.update(morekw)
         outs.append(fill_between(ax, total, new_total,

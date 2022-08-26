@@ -2,11 +2,11 @@
 # This Python file uses the following encoding: utf-8
 
 
-from __future__ import print_function
-
 from copy import deepcopy
 from collections import defaultdict
+
 import numpy as np
+
 try:
     import termcolor
 except:
@@ -158,7 +158,6 @@ class Hist1D (object):
             i.append (ix), j.append (fig._j (v))
         fig._set (raster, u'─', i, j, color=self.color)
         return raster
-
 
 class Figure (object):
 
