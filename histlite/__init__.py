@@ -19,20 +19,19 @@ except:
     mpl = plt = None
 
 
-eps = np.finfo(float).eps
+from . import version
 
 try:
     from . import heal
 except:
     pass
 
-try:
-    from . import bear
-except:
-    pass
 
-
+eps = np.finfo(float).eps
 xrange = range
+
+# 1 - 2 * stats.norm.sf(1)
+_containment_1sigma = 0.6826894921370859
 
 
 def reindex(a, order):
@@ -482,7 +481,7 @@ class Hist(object):
         return self.sum([i for i in xrange(self.n_dim) if i not in axes],
                          integrate=integrate)
 
-    def contain(self, axis, frac=1 - 2 * stats.norm.sf(1)):
+    def contain(self, axis, frac=_containment_1sigma):
         """Project the histogram onto a subset of its dimensions by taking the
         containment interval along ``axis``.
 
@@ -515,7 +514,7 @@ class Hist(object):
         return Hist(bins, values)
 
     def contain_project(self, axis,
-                         frac=1 - 2 * stats.norm.sf(1),
+                         frac=_containment_1sigma,
                          n_sigma=None,
                          ):
         """
