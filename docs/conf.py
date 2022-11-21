@@ -12,21 +12,22 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
+import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
 
 # -- Project information -----------------------------------------------------
 
-project = 'histlite'
-copyright = '2022, Mike Richman'
-author = 'Mike Richman'
+_ABOUT = {}
+_here = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(_here, '..', 'histlite', 'version.py')) as f:
+    exec(f.read(), _ABOUT)
 
-# The short X.Y version
-version = '2022.8.26'
-# The full version, including alpha/beta/rc tags
-release = '2022.8.26'
+project = _ABOUT['project_name']
+author = _ABOUT['author']
+copyright = f'2022, {author}'
+version = release = _ABOUT['version']
 
 
 # -- General configuration ---------------------------------------------------
@@ -44,6 +45,13 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.autodoc',
     'nbsphinx',
+]
+
+autodoc_mock_imports = [
+    'numpy',
+    'pandas',
+    'scipy',
+    'matplotlib',
 ]
 
 # Add any paths that contain templates here, relative to this directory.

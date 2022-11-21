@@ -7,18 +7,20 @@ import setuptools
 __version__ = '2022.8.26'
 
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+_here = os.path.abspath(os.path.dirname(__file__))
+ABOUT = {}
+with open(os.path.join(_here, 'histlite', 'version.py')) as f:
+    exec(f.read(), ABOUT)
 
 setup(
-    name='histlite',
-    version=__version__,
-    author='Mike Richman',
-    author_email='mike.d.richman@gmail.com',
+    name=ABOUT['package_name'],
+    version=ABOUT['version'],
+    author=ABOUT['author'],
+    author_email=ABOUT['author_email'],
     packages = find_packages(),
-    description='A somewhat "lite" histogram library',
-    long_description=long_description,
+    description=ABOUT['description'],
+    long_description=ABOUT['long_description'],
     long_description_content_type='text/markdown',
-    url='https://github.com/zgana/histlite',
+    url=ABOUT['url'],
     install_requires=['numpy', 'scipy'],
 )
