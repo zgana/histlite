@@ -13,14 +13,15 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import sys
+
+_here = os.path.abspath(os.path.dirname(__file__))
+sys.path.insert(0, os.path.abspath(os.path.join(_here, '..')))
 
 
 # -- Project information -----------------------------------------------------
 
 _ABOUT = {}
-_here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(_here, '..', 'histlite', 'version.py')) as f:
     exec(f.read(), _ABOUT)
 
