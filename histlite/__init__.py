@@ -1684,10 +1684,10 @@ def hist_from_eval(f, vectorize=True, err_f=None, ndim=None, **kwargs):
     """
     # infer number of arguments
     try:
-        spec = inspect.getargspec(f)
+        spec = inspect.getfullargspec(f)
         ismethod = inspect.ismethod(f)
     except:
-        spec = inspect.getargspec(f.__call__)
+        spec = inspect.getfullargspec(f.__call__)
         ismethod = inspect.ismethod(f.__call__)
     if ndim is None:
         ndim = len(spec.args) - len(spec.defaults or [])
