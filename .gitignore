@@ -1,8 +1,12 @@
+# various python artifacts
 .ipynb_checkpoints
 build
 dist
 *egg*
 _build
 __pycache__
+.coverage
+.python-version
 
-scratch
+# avoid committing lockfile, at least for now
+uv.lock
