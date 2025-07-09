@@ -12,6 +12,7 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import datetime
 import os
 import sys
 
@@ -27,8 +28,10 @@ with open(os.path.join(_here, '..', 'histlite', 'version.py')) as f:
 
 project = _ABOUT['project_name']
 author = _ABOUT['author']
-copyright = f'2022, {author}'
 version = release = _ABOUT['version']
+
+year = datetime.datetime.today().year
+copyright = f'{year}, {author}'
 
 
 # -- General configuration ---------------------------------------------------
@@ -77,7 +80,7 @@ language = 'en'
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '.ipynb_checkpoints']
+exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store', '.ipynb_checkpoints', '.venv']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None

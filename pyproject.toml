@@ -1,15 +1,8 @@
-
-
-project_name = package_name = 'histlite'
-version = '2025.7.0'
-
-author = 'Mike Richman'
-author_email = 'mike.d.richman@gmail.com'
-url = 'https://github.com/zgana/histlite'
-
+[project]
+name = "histlite"
+version = "2025.7.0"
 description = 'A somewhat "lite" histogram library'
-long_description = """
-**histlite** is a histogram calculation and plotting library that tries to be
+long_description = """**histlite** is a histogram calculation and plotting library that tries to be
 "lite" on data structures but rich in statistics and visualization features.
 So far, development has taken place during my (Mike Richman) time as a graduate
 student and post-doctoral researcher in the field of particle astrophysics —
@@ -31,5 +24,31 @@ The primary histogramming functionality consists of a thin wrapper around
 `numpy.histogramdd`.  Statistical tools leverage **scipy** but include
 custom solutions for some use cases.  (Importantly, error propagation is
 currently handled manually but may be migrated to the **uncertainties**
-package in the future.)  Plotting is done using **matplotlib**.
-""".strip()
+package in the future.)  Plotting is done using **matplotlib**."""
+readme = "README.md"
+authors = [
+    { name = "Mike Richman", email = "mike.d.richman@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "numpy",
+    "scipy",
+]
+
+[project.urls]
+Homepage = "https://histlite.readthedocs.io/"
+Documentation = "https://histlite.readthedocs.io/"
+Repository = "https://github.com/zgana/histlite"
+Issues = "https://github.com/zgana/histlite/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "coverage",
+    "pytest",
+    "pytest-cov",
+]
+
