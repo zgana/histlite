@@ -1,4 +1,4 @@
-name: Publish Python 🐍 distribution 📦 to PyPI and TestPyPI
+name: Publish to TestPyPI
 
 on:
   pull_request:
@@ -30,7 +30,7 @@ jobs:
 
     environment:
       name: testpypi
-      url: https://test.pypi.org/p/<package-name>
+      url: https://test.pypi.org/p/histlite
 
     permissions:
       id-token: write  # IMPORTANT: mandatory for trusted publishing
