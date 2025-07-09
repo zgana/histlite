@@ -19,8 +19,14 @@ jobs:
       with:
         version: "0.7.19"
 
-    - name: Build package
+    - name: Build distribution package
       run: uv build
+
+    - name: Store the distribution packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: python-package-distributions
+        path: dist/
 
   publish-to-testpypi:
     name: Publish Python 🐍 distribution 📦 to TestPyPI
