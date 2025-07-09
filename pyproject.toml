@@ -1,6 +1,6 @@
 [project]
 name = "histlite"
-version = "2025.7.0"
+version = "2025.7.1"
 description = 'A somewhat "lite" histogram library'
 long_description = """**histlite** is a histogram calculation and plotting library that tries to be
 "lite" on data structures but rich in statistics and visualization features.
