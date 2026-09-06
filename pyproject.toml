@@ -1,6 +1,6 @@
 [project]
 name = "histlite"
-version = "2026.9.0"
+version = "2026.9.1"
 description = 'A somewhat "lite" histogram library'
 long_description = """**histlite** is a histogram calculation and plotting library that tries to be
 "lite" on data structures but rich in statistics and visualization features.
@@ -29,7 +29,7 @@ readme = "README.md"
 authors = [
     { name = "Mike Richman", email = "mike.d.richman@gmail.com" }
 ]
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 dependencies = [
     "numpy",
     "scipy",
