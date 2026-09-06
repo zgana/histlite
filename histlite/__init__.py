@@ -297,7 +297,8 @@ class Hist(object):
             if last_mask:
                 return last_i
             else:
-                return int(digitize([x], self.bins[axis]) - 1)
+                return_array = digitize([x], self.bins[axis]) - 1
+                return int(return_array[0])
 
     def indices(self, *xs):
         """Get the indices for the specified coordinates."""
