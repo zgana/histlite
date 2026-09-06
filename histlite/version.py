@@ -1,7 +1,7 @@
 
 
 project_name = package_name = 'histlite'
-version = "2026.9.0"
+version = "2026.9.1"
 
 author = 'Mike Richman'
 author_email = 'mike.d.richman@gmail.com'
